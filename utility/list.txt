@@ -1,0 +1,37 @@
+# ----- NUKE 
+alias nuke15="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/./Nuke15.1 --nukex"
+alias nuke14="/Applications/Nuke14.0v2/Nuke14.0v2.app/Contents/MacOS/./Nuke14.0 --nukex"
+alias hiero14="/Applications/Nuke14.0v2/Nuke14.0v2.app/Contents/MacOS/./Nuke14.0 --studio"
+alias hiero15="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/./Nuke15.1 --studio"
+alias _nuke_batch="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/Nuke15.1 --nukex -t ~/Documents/preferences/script/utility/_nuke_batch.py"
+alias _nuke_batch_new="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/Nuke15.1 --nukex -t ~/Documents/preferences/script/utility/_nuke_batch_new.py"
+
+# ----- CLAYNET
+alias claynet="sh ~/Documents/preferences/script/boot/projectvol.command"
+
+# ----- LIST OF COMMAND SHORTCUT
+alias list="grep -v '^#'  ~/Documents/preferences/script/utility/list.txt"
+alias lost="cat  ~/Documents/preferences/script/utility/list.txt"
+
+# ----- LIST FILES  with .ext
+alias list_name="ls | tr '\n' '\n'"
+
+# ----- LIST FILES no .ext
+alias list_name2="ls | sed 's/\.[^.]*$//'"
+
+
+alias goto_projectvol="cd ~/Desktop/PROJECTVOL/"
+alias goto_script="cd ~/Documents/preferences/script/"
+alias goto_utility="cd ~/Documents/preferences/script/utility"
+alias del_autosave="python3 ~/Documents/preferences/script/utility/delete_nuke_autosave.py"
+alias compare_folder="python3 ~/Documents/preferences/script/utility/compare_folder.py"
+alias delete_nuke_autosave="python3 ~/Documents/preferences/script/utility/delete_nuke_autosave.py"
+alias compare_folder_02="python3 ~/Documents/preferences/script/utility/compare_folder_02.py"
+alias generate_file_list="python3 ~/Documents/preferences/script/utility/generate_file_list.py"
+# alias copy_folders="python3 ~/Documents/preferences/script/utility/copy_folders.py"
+
+alias temp="sudo smartctl -a /dev/disk7"
+
+copy_folders() {
+    python3 ~/Documents/preferences/script/utility/copy_folders.py "$@"
+}
