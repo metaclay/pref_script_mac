@@ -7,7 +7,7 @@ alias _nuke_batch="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/Nuke15
 alias _nuke_batch_new="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/Nuke15.1 --nukex -t ~/Documents/preferences/script/utility/_nuke_batch_new.py"
 
 # ----- CLAYNET
-alias claynet="sh ~/Documents/preferences/script/boot/projectvol.command"
+alias claynet="~/Documents/preferences/script/boot/projectvol.command"
 
 # ----- LIST OF COMMAND SHORTCUT
 alias list="grep -v '^#'  ~/Documents/preferences/script/utility/list.txt"
