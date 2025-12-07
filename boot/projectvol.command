@@ -3,10 +3,10 @@
 Converted from macOS shell script to Python.
 
 Usage examples:
-  python3 projectvol_setup.py           # run in non-confirm mode (same as SKIP_CONFIRM="")
-  python3 projectvol_setup.py -c        # enable confirmation prompts (SKIP_CONFIRM="x")
-  python3 projectvol_setup.py -r        # print last mounted folder structure
-  python3 projectvol_setup.py -d        # print config data
+  python3 projectvol.py           # run in non-confirm mode (same as SKIP_CONFIRM="")
+  python3 projectvol.py -c        # enable confirmation prompts (SKIP_CONFIRM="x")
+  python3 projectvol.py -r        # print last mounted folder structure
+  python3 projectvol.py -d        # print config data
 
 Notes:
 - This script mimics the original shell behavior as closely as possible.
@@ -24,14 +24,12 @@ import subprocess
 from pathlib import Path
 
 # ======= DEFAULT SETUP =======
-VER = 24
+VER = 2.4
 LAN_CLAYNET = 0   # 1-USE CLANET ON SERVER , 0-LOCAL
 LAN_PROJECT = 0   # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN LAN_USER LIST
 EXT = 0           # 1-USE EXTERNAL DRIVE, 0-USE SYSTEM(DESKTOP FOLDER)
 
 LAN_USER_LIST = ["andi"]
-
-
 
 # SKIP_CONFIRM
 # "" or 'y' or 'Y' TO SKIP SKIP_CONFIRMING (OR ANYTHING TO USE SKIP_CONFIRMING) - IT WILL NOT ASK TO SET THE VARS
@@ -71,7 +69,9 @@ HOME_EXT_PUB = f"/Volumes/{EXT_DRIVE}/{USERSDIR}/{SHARED}"
 TEMPDIR = f"/Users/{USER}/{CLAY}/__TEMPDIR__"
 RESULTFILE = f"/Users/{USER}/{CLAY}/folderlist.txt"
 
-TITLE = f"""=======================
+TITLE = \
+f"""
+=======================
 PROJECTVOL SETUP v.{VER}
 =======================
 """
@@ -468,9 +468,9 @@ def header():
                             # clean temp
                             if os.path.isdir(TEMPDIR):
                                 subprocess.run(["diskutil", "unmount", TEMPDIR],
-                                               stdout=subprocess.DEVNULL,
-                                               stderr=subprocess.DEVNULL,
-                                               text=True)
+                                stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL,
+                                text=True)
                             break
                         else:
                             ipaddr = ""
