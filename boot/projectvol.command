@@ -25,9 +25,9 @@ from pathlib import Path
 
 # ======= DEFAULT SETUP =======
 VER = 2.4
-LAN_CLAYNET = 0   # 1-USE CLANET ON SERVER , 0-LOCAL
-LAN_PROJECT = 0   # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN LAN_USER LIST
-EXT = 0           # 1-USE EXTERNAL DRIVE, 0-USE SYSTEM(DESKTOP FOLDER)
+LAN_CLAYNET = 1   # 1-USE CLANET ON SERVER , 0-LOCAL
+LAN_PROJECT = 1   # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN LAN_USER LIST
+EXT = 1           # 1-USE EXTERNAL DRIVE, 0-USE SYSTEM(DESKTOP FOLDER)
 
 LAN_USER_LIST = ["andi"]
 
@@ -750,7 +750,7 @@ def setup_folders_and_mounts(ipaddr: str):
 
     # ---- RESULT ----
     lan = LAN_CLAYNET + LAN_PROJECT
-    print("      RESULT --> ", end="")
+    print(f"      RESULT ({LAN_CLAYNET}-{LAN_PROJECT}-{EXT}) --> ", end="")
     if EXT == 1:
         print("PROJECTVOL::EXT", end="")
     else:
