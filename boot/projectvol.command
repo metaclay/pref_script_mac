@@ -750,6 +750,9 @@ def setup_folders_and_mounts(ipaddr: str):
     print()
 
     # ---- RESULT ----
+    clear_screen()
+    print("--------------------------------------------------------------------------------------\n")
+    print(f"      PROJECTVOL SETUP VER {VER}\n", end="")
     lan = LAN_CLAYNET + LAN_PROJECT
     print(f"      MODE : {LAN_CLAYNET}-{LAN_PROJECT_ORIG}-{EXT}\n", end="")
     if EXT == 1:
@@ -768,6 +771,7 @@ def setup_folders_and_mounts(ipaddr: str):
         print(f"      SERVER/LAN : {ipaddr}")
     else:
         print("      NO SERVER/LAN\n")
+    print()
     print("--------------------------------------------------------------------------------------")
 
     # Write RESULTFILE
@@ -910,12 +914,12 @@ def setup_folders_and_mounts(ipaddr: str):
         text=True
     )
 
-    print(" ")
-    print(" ")
-    print("----------------------------------------------------")
-    print("      CLAYNET SETUP :: DONE ")
-    print("----------------------------------------------------")
-    print(" ")
+    # print(" ")
+    # print(" ")
+    # print("----------------------------------------------------")
+    # print("      CLAYNET SETUP :: DONE ")
+    # print("----------------------------------------------------")
+    # print(" ")
 
 
 # ========================= MAIN =========================
