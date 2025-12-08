@@ -24,10 +24,11 @@ import subprocess
 from pathlib import Path
 
 # ======= DEFAULT SETUP =======
-VER = 2.4
-LAN_CLAYNET = 1   # 1-USE CLANET ON SERVER , 0-LOCAL
-LAN_PROJECT = 1   # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN LAN_USER LIST
+VER = 2.5
+LAN_CLAYNET = 0   # 1-USE CLANET ON SERVER , 0-LOCAL
+LAN_PROJECT = 2   # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN LAN_USER LIST
 EXT = 1           # 1-USE EXTERNAL DRIVE, 0-USE SYSTEM(DESKTOP FOLDER)
+LAN_PROJECT_ORIG = LAN_PROJECT
 
 LAN_USER_LIST = ["andi"]
 
@@ -750,23 +751,23 @@ def setup_folders_and_mounts(ipaddr: str):
 
     # ---- RESULT ----
     lan = LAN_CLAYNET + LAN_PROJECT
-    print(f"      RESULT ({LAN_CLAYNET}-{LAN_PROJECT}-{EXT}) --> ", end="")
+    print(f"      MODE : {LAN_CLAYNET}-{LAN_PROJECT_ORIG}-{EXT}\n", end="")
     if EXT == 1:
-        print("PROJECTVOL::EXT", end="")
+        print("      PROJECTVOL : EXT\n", end="")
     else:
-        print("PROJECTVOL::INT", end="")
+        print("      PROJECTVOL : INT\n", end="")
     if lan > 0:
         if LAN_CLAYNET == 1:
-            print("  CLAYNET::LAN", end="")
+            print("      CLAYNET : LAN\n", end="")
         else:
-            print("  CLAYNET::LOCAL", end="")
+            print("      CLAYNET : LOCAL\n", end="")
         if LAN_PROJECT == 1:
-            print("  PROJECT::LAN", end="")
+            print("      PROJECT : LAN", "(AUTO)" if LAN_PROJECT_ORIG==2 else "","\n",  end="")
         else:
-            print("  PROJECT::LOCAL", end="")
-        print(f" ( {ipaddr} )")
+            print("      PROJECT : LOCAL", "(AUTO)" if LAN_PROJECT_ORIG==2 else "", "\n",  end="")
+        print(f"      SERVER/LAN : {ipaddr}")
     else:
-        print(" - NO LAN")
+        print("      NO SERVER/LAN\n")
     print("--------------------------------------------------------------------------------------")
 
     # Write RESULTFILE
