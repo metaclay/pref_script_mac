@@ -30,7 +30,7 @@ LAN_PROJECT = 2   # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN L
 EXT = 1           # 1-USE EXTERNAL DRIVE, 0-USE SYSTEM(DESKTOP FOLDER)
 LAN_PROJECT_ORIG = LAN_PROJECT
 
-LAN_USER_LIST = ["andi"]
+AUTO_LAN_PROJECT_USERS = ["andi"] # project folder use from LAN automatically for these users
 
 # SKIP_CONFIRM
 # "" or 'y' or 'Y' TO SKIP SKIP_CONFIRMING (OR ANYTHING TO USE SKIP_CONFIRMING) - IT WILL NOT ASK TO SET THE VARS
@@ -188,13 +188,13 @@ def password_setup():
     run_sudo(["ls"], PASSWORD_WK, check=False)
 
 
-# ========================= LAN_USER_LIST LOGIC =========================
+# ========================= AUTO_LAN_PROJECT_USERS LOGIC =========================
 
 def auto_set_lan_project():
     global LAN_PROJECT
     if LAN_PROJECT == 2:
         LAN_PROJECT = 0
-        for u in LAN_USER_LIST:
+        for u in AUTO_LAN_PROJECT_USERS:
             if u == USER:
                 LAN_PROJECT = 1
                 break
