@@ -4,7 +4,36 @@ import re
 # -----------------------------------
 # Configuration
 # -----------------------------------
-folder = "/Volumes/CLAY_EXT/.__USERS__/andi/.__CLAY__/PROJECTVOL_SRC/projects/COLT/project/nuke/FNL"
+folder = "/Volumes/CLAY_EXT/.__USERS__/andi/.__CLAY__/PROJECTVOL_SRC/projects/COLT/project/nuke"
+
+# leave this empty if don't want exact match to any item on this list.
+match_list = [
+"CLT_FNL_140C_112_v001.nk",
+"CLT_FNL_140C_115_v001.nk",
+"CLT_FNL_140C_118_v001.nk",
+"CLT_FNL_140C_124_v001.nk",
+"CLT_FNL_140C_127_v001.nk",
+"CLT_FNL_140C_130_v001.nk",
+"CLT_FNL_140C_133_v001.nk",
+"CLT_FNL_140C_136_v001.nk",
+"CLT_FNL_140C_139_v001.nk",
+"CLT_FNL_140C_142_v001.nk",
+"CLT_LOG_0005_155_v001.nk",
+"CLT_LOG_0005_160_v001.nk",
+"CLT_LOG_0005_170_v001.nk",
+"CLT_LOG_0005_190_v001.nk",
+"CLT_LOG_0005_195_v001.nk",
+"CLT_LOG_0005_200_v001.nk",
+"CLT_LOG_0005_230_v001.nk",
+"CLT_LOG_0005_235_v001.nk",
+"CLT_LOG_0005_240_v001.nk",
+"CLT_LOG_0005_245_v001.nk",
+"CLT_LOG_0005_275_v001.nk",
+"CLT_LOG_0005_305_v001.nk",
+"CLT_LOG_0005_325_v001.nk",
+"CLT_LOG_0005_330_v001.nk",
+"CLT_LOG_0005_335_v001.nk",
+]
 
 # --- New Pattern Variables (All must match - AND operation) ---
 # For example: file must start with CLT_ AND end with _draft AND contain v001
@@ -17,7 +46,7 @@ output_file = os.path.expanduser("~/Documents/preferences/script/utility/_file_l
 
 # Exclusion patterns
 exclude_file_patterns = ["annotations"]        # filenames containing these
-exclude_folder_patterns = ["annotations", "archives"]      # folders containing these
+exclude_folder_patterns = ["annotations", "archives", "users", "_bak"]      # folders containing these
 exclude_file_endings = ["~"]                   # filenames ending with these
 exclude_autosave_regex = re.compile(r'autosave\d*$')   # ignore autosave1, autosave10, etc.
 
@@ -105,6 +134,12 @@ def search_files(folder_path, start_with=[], end_with=[], contain=[], write_outp
             if contain:
                 if not any(p in filename for p in contain):
                     is_match = False
+
+            if match_list :
+                if filename not in match_list :
+                    is_match = False
+
+           
                 
             # If the file passed all the checks (is_match remains True), append it
             if is_match:
@@ -138,6 +173,11 @@ if __name__ == "__main__":
     print(f"  Contain (OR logic): {contain if contain else 'Any'}")
     print(" -----------------------------------")
     print("\nFile must satisfy **ALL** (AND logic) of the non-empty criteria above.")
+    if match_list :
+        print()
+        print("   Also pattern must match one of item in this list : ")
+        for i in match_list:
+            print("  >  "+i)
     print()
     
     answer = input("Proceed? (Y/n): ").strip().lower()

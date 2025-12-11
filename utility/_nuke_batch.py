@@ -7,24 +7,28 @@ import cxsetting
 import hashlib
 import re
 import nukescripts
+import claystudio
 
 FILE_LIST = os.path.expanduser("~/Documents/preferences/script/utility/_file_list.txt")
 
 FAILED = []     # (path, reason)
 SKIPPED = []    # (path, reason)
-
-MODE = 6
+RENDER_VERSION = 2 # 0:v0 , 1:render final, 2:render review exr
+MODE = 3
 REPLACE_RENDER_GROUP = 1
-RENDER_VERSION = 0
+MODE_DESCRIPTIONS = {
+    1: "INTIAL SETUP - CLAYPROJECT NODES CLEANUP",
+    2: "CREATE RENDER GROUP" + (" > RENDER V000" if RENDER_VERSION == 0 else (" > RENDER FINAL" if RENDER_VERSION == 1 else " > RENDER REVIEW EXR")),
+    3: "RENDER " + ("(Non-Modifying)" if REPLACE_RENDER_GROUP == 0 else "") +
+       (" > RENDER V000" if RENDER_VERSION == 0 else (" > RENDER FINAL" if RENDER_VERSION == 1 else " > RENDER REVIEW EXR")),
+    4: "DELETE NODES",
+    5: "RESET ROOT CX",
+    6: "RENAME NODES",
+}
 
 NODES_TO_DELETE = [
     "Precomp1"
 ]
-
-_NODES_V0_ = clayproject._NODES_V0_
-_NODES_OUTPUT_ = clayproject._NODES_OUTPUT_
-_RENDER_V0_ = clayproject._RENDER_V0_
-_RENDER_FINAL_ = clayproject._RENDER_FINAL_
 
 RENAME_MAP = {
     "_src_tc": "_src_tc_",
@@ -36,18 +40,15 @@ RENAME_MAP = {
     "_in_final": "_in_final_",
     "_in_ref": "_in_ref_",
     "_in_plate": "_in_plate_",
+    "_in_mask": "_in_mask_",
 
 }
 
-MODE_DESCRIPTIONS = {
-    1: "INTIAL SETUP - CLAYPROJECT NODES CLEANUP",
-    2: "CREATE RENDER GROUP" + (" > RENDER V000" if RENDER_VERSION == 0 else " > RENDER FINAL"),
-    3: "RENDER " + ("(Non-Modifying)" if REPLACE_RENDER_GROUP == 0 else "") +
-       (" > RENDER V000" if RENDER_VERSION == 0 else " > RENDER FINAL"),
-    4: "DELETE NODES",
-    5: "RESET ROOT CX",
-    6: "RENAME NODES",
-}
+_NODES_V0_ = clayproject._NODES_V0_
+_NODES_OUTPUT_ = clayproject._NODES_OUTPUT_
+_RENDER_V0_ = clayproject._RENDER_V0_
+_RENDER_FINAL_ = clayproject._RENDER_FINAL_
+_RENDER_REVIEW_EXR_ = clayproject._RENDER_REVIEW_EXR_
 
 MAX_FILE_LIST = 6
 _CHANGE_TOKEN_= "_change_token_"
@@ -216,7 +217,10 @@ def render(nk_path, render_version=0):
     if render_version == 0:
         render_node_name = _RENDER_V0_
     else:
-        render_node_name = _RENDER_FINAL_
+        if render_version == 1 :
+            render_node_name = _RENDER_FINAL_
+        else :
+            render_node_name = _RENDER_REVIEW_EXR_
 
     render_node = nuke.toNode(render_node_name)
 
