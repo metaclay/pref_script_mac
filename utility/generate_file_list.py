@@ -8,46 +8,22 @@ folder = "/Volumes/CLAY_EXT/.__USERS__/andi/.__CLAY__/PROJECTVOL_SRC/projects/CO
 
 # leave this empty if don't want exact match to any item on this list.
 match_list = [
-"CLT_FNL_140C_112_v001.nk",
-"CLT_FNL_140C_115_v001.nk",
-"CLT_FNL_140C_118_v001.nk",
-"CLT_FNL_140C_124_v001.nk",
-"CLT_FNL_140C_127_v001.nk",
-"CLT_FNL_140C_130_v001.nk",
-"CLT_FNL_140C_133_v001.nk",
-"CLT_FNL_140C_136_v001.nk",
-"CLT_FNL_140C_139_v001.nk",
-"CLT_FNL_140C_142_v001.nk",
-"CLT_LOG_0005_155_v001.nk",
-"CLT_LOG_0005_160_v001.nk",
-"CLT_LOG_0005_170_v001.nk",
-"CLT_LOG_0005_190_v001.nk",
-"CLT_LOG_0005_195_v001.nk",
-"CLT_LOG_0005_200_v001.nk",
-"CLT_LOG_0005_230_v001.nk",
-"CLT_LOG_0005_235_v001.nk",
-"CLT_LOG_0005_240_v001.nk",
-"CLT_LOG_0005_245_v001.nk",
-"CLT_LOG_0005_275_v001.nk",
-"CLT_LOG_0005_305_v001.nk",
-"CLT_LOG_0005_325_v001.nk",
-"CLT_LOG_0005_330_v001.nk",
-"CLT_LOG_0005_335_v001.nk",
+
 ]
 
 # --- New Pattern Variables (All must match - AND operation) ---
 # For example: file must start with CLT_ AND end with _draft AND contain v001
-start_with = ["CLT_"]        # Filename must start with ANY of these
-end_with = ["v001"]       # Filename must end with ANY of these (excluding extension)
+start_with = ["CLT_"]        # Filename must start with ANY of these -> example : ["CLT_"]   
+end_with = ["v001"]       # Filename must end with ANY of these (excluding extension) -> example : ["v001"]  
 contain = []            # Filename must contain ANY of these
 # -----------------------------
 
 output_file = os.path.expanduser("~/Documents/preferences/script/utility/_file_list.txt")
 
 # Exclusion patterns
-exclude_file_patterns = ["annotations"]        # filenames containing these
-exclude_folder_patterns = ["annotations", "archives", "users", "_bak"]      # folders containing these
-exclude_file_endings = ["~"]                   # filenames ending with these
+exclude_file_patterns = ["annotations"]        # filenames containing these -> example : ["annotations"] 
+exclude_folder_patterns = ["annotations", "archives", "users", "_bak"]      # folders containing these -> example : ["annotations", "archives", "users", "_bak"]  
+exclude_file_endings = ["~"]                   # filenames ending with these -> example : ["~"]  
 exclude_autosave_regex = re.compile(r'autosave\d*$')   # ignore autosave1, autosave10, etc.
 
 # Include-only extensions (only these files will be scanned)

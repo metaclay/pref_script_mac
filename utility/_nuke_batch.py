@@ -13,21 +13,24 @@ FILE_LIST = os.path.expanduser("~/Documents/preferences/script/utility/_file_lis
 
 FAILED = []     # (path, reason)
 SKIPPED = []    # (path, reason)
-RENDER_VERSION = 2 # 0:v0 , 1:render final, 2:render review exr
-MODE = 3
+RENDER_VERSION = 2 # 0:v0 , 1:render final, 2:render review exr, 3:render review mov
+RENDER_SIMPLE = 1 # Render OUTPUT or OUTPUT SIMPLE
+MODE = 7
 REPLACE_RENDER_GROUP = 1
+RENDER_TEXT2 = ("( OUTPUT SIMPLE )" if RENDER_SIMPLE == 1 else "")
+RENDER_TEXT = (" > RENDER V000" if RENDER_VERSION == 0 else (" > RENDER FINAL" if RENDER_VERSION == 1 else " > RENDER REVIEW EXR")) + RENDER_TEXT2
 MODE_DESCRIPTIONS = {
     1: "INTIAL SETUP - CLAYPROJECT NODES CLEANUP",
-    2: "CREATE RENDER GROUP" + (" > RENDER V000" if RENDER_VERSION == 0 else (" > RENDER FINAL" if RENDER_VERSION == 1 else " > RENDER REVIEW EXR")),
-    3: "RENDER " + ("(Non-Modifying)" if REPLACE_RENDER_GROUP == 0 else "") +
-       (" > RENDER V000" if RENDER_VERSION == 0 else (" > RENDER FINAL" if RENDER_VERSION == 1 else " > RENDER REVIEW EXR")),
+    2: "CREATE RENDER GROUP" + RENDER_TEXT ,
+    3: "RENDER " + ("(Non-Modifying)" if REPLACE_RENDER_GROUP == 0 else "") + RENDER_TEXT ,
     4: "DELETE NODES",
     5: "RESET ROOT CX",
     6: "RENAME NODES",
+    7: "EXECUTE BUTTON",
 }
 
 NODES_TO_DELETE = [
-    "Precomp1"
+    "Precomp1",
 ]
 
 RENAME_MAP = {
@@ -43,6 +46,10 @@ RENAME_MAP = {
     "_in_mask": "_in_mask_",
 
 }
+
+EXEC_BUTTONS = [
+    "cxporeset",
+]
 
 _NODES_V0_ = clayproject._NODES_V0_
 _NODES_OUTPUT_ = clayproject._NODES_OUTPUT_
@@ -67,9 +74,10 @@ def full_scene_hash():
     
     return h.hexdigest()
 
-# ----------------------------------------------------
+#################################################################
 # READ LIST
-# ----------------------------------------------------
+#################################################################
+
 def read_file_list(path):
     print("\n[READ FILE LIST] Loading:", path)
     files = []
@@ -95,9 +103,10 @@ def read_file_list(path):
     return files
 
 
-# ----------------------------------------------------
+#################################################################
 # BACKUP
-# ----------------------------------------------------
+#################################################################
+
 def backup_original(nk_path):
     print("  --->  Backing up original NK file ...")
 
@@ -132,9 +141,10 @@ def backup_original(nk_path):
         FAILED.append((nk_path, f"Backup failed: {e}"))
 
 
-# ----------------------------------------------------
+#################################################################
 # MODE 1
-# ----------------------------------------------------
+#################################################################
+
 def initial_setup(nk_path, ignore_skipped=0, ignore_failed=0):
 
     # RESET CX PARAMETER IF EMPTY
@@ -147,9 +157,10 @@ def initial_setup(nk_path, ignore_skipped=0, ignore_failed=0):
     None # only load and re-save to trigger nodes_cleanup() when open script
 
 
-# ----------------------------------------------------
+#################################################################
 # MODE 2
-# ----------------------------------------------------
+#################################################################
+
 def create_render_group(nk_path, replace_render_group=0,
                         ignore_skipped=0, ignore_failed=0,
                         render_version=0):
@@ -183,7 +194,8 @@ def create_render_group(nk_path, replace_render_group=0,
     try:
         clayproject.clay_shortcut_render(
             replace=replace_render_group,
-            render_version=RENDER_VERSION
+            render_version=RENDER_VERSION,
+            render_simple=RENDER_SIMPLE
         )
 
         print("  ✅ Render group creation is completed successfully.")
@@ -208,9 +220,10 @@ def create_render_group(nk_path, replace_render_group=0,
     
     
 
-# ----------------------------------------------------
+#################################################################
 # MODE 3
-# ----------------------------------------------------
+#################################################################
+
 def render(nk_path, render_version=0):
     print("  --->  Running render procedure  ...")
 
@@ -289,9 +302,10 @@ def render(nk_path, render_version=0):
     None
 
 
-# ----------------------------------------------------
+#################################################################
 # MODE 4
-# ----------------------------------------------------
+#################################################################
+
 def delete_nodes(nk_path, nodes_to_delete):
     print("  --->  Running delete_nodes procedure ...")
 
@@ -319,9 +333,10 @@ def delete_nodes(nk_path, nodes_to_delete):
         return False
 
 
-# ----------------------------------------------------
+#################################################################
 # MODE 5
-# ----------------------------------------------------
+#################################################################
+
 def reset_rootcx(nk_path):
     print("  --->  Executing nuke.root().knob('cxallreset').execute() ...")
 
@@ -341,20 +356,25 @@ def reset_rootcx(nk_path):
         return False
 
 
-# ----------------------------------------------------
+#################################################################
 # MODE 6
-# ----------------------------------------------------
-def rename_nodes(nk_path, rename_map):
-    print("  ---> >> Running rename_nodes procedure ...")
-    False
+#################################################################
 
+def rename_nodes(nk_path, rename_map):
+    global SKIPPED
+    print("  ---> >> Running rename_nodes procedure ...")
+    
+    num_to_rename = len(rename_map)
+    skipped_counter = 0
+    skipped_local = []
     try:
         for old_name, new_name in rename_map.items():
             node = nuke.toNode(old_name)
 
             if not node:
                 print(f"  ⚠️ Node not found: {old_name}")
-                SKIPPED.append((nk_path, f"Node not found: {old_name}"))
+                skipped_counter += 1
+                skipped_local.append((nk_path, f"Node not found: {old_name}"))
                 continue
 
             if nuke.toNode(new_name):
@@ -365,9 +385,10 @@ def rename_nodes(nk_path, rename_map):
 
             node.setName(new_name)
             print(f"  ✅ Renamed '{old_name}' → '{new_name}'")
-            True
-
-        return changed
+            
+        if skipped_counter == num_to_rename : # add to SKIPPED only if ALL task are skipped - not partial
+            SKIPPED += skipped_local
+        
 
     except Exception as e:
         msg = f"rename_nodes failed: {e}"
@@ -376,9 +397,55 @@ def rename_nodes(nk_path, rename_map):
         return False
 
 
-# ----------------------------------------------------
+
+#################################################################
+# MODE 7
+#################################################################
+
+def execute_button(nk_path, exec_buttons=[]):
+    global SKIPPED
+    print("  ---> >> Running execute buttons ...")
+    root = nuke.root()
+    num_exec = len(exec_buttons)
+    skipped_counter = 0
+    failed_counter = 0
+    skipped_local = []
+    failed_local = []
+    for i in exec_buttons :
+        print(f"  Executing button : {i}")
+        if root[i] :
+            try :
+                root[i].execute()
+            except Exception as e:
+                failed_counter += 1
+                msg = f"Failed to execute button {i} : {e}"
+                print("  ❌", msg)
+                failed_local.append((nk_path, msg))
+                continue
+
+        else :
+            skipped_counter += 1
+            print(f"  Button {i} does not exist.")
+            skipped_local.append(nk_path, f" > Button {i} does not exist")
+
+    if failed_counter > 0 : # add to FAILED only if ALL tasks are failed - not partial
+        FAILED += failed_local
+        return False            
+    
+    if skipped_counter == num_exec : # add to SKIPPED only if ALL tasks are skipped - not partial
+        SKIPPED += skipped_local
+        return False
+
+    # success
+    return True # File is modified
+
+
+
+
+#################################################################
 # PROCESS
-# ----------------------------------------------------
+#################################################################
+
 def process_nk_file(nk_path, index, total):
     global MODE
     changed = None
@@ -441,13 +508,14 @@ def process_nk_file(nk_path, index, total):
 
     elif MODE == 6:
         rename_nodes(nk_path, RENAME_MAP)
+    elif MODE == 7 :
+        changed = execute_button(nk_path, exec_buttons=EXEC_BUTTONS)
 
     else:
         msg = f"Invalid MODE: {MODE}. Skipping processing."
         print("  ❌", msg)
         SKIPPED.append((nk_path, msg))
         return
-
 
     if VERBOSE :
     # PRINT CX DATA
@@ -511,12 +579,14 @@ def process_nk_file(nk_path, index, total):
     print()
 
 
-# ----------------------------------------------------
+#################################################################
 # SUMMARY
-# ----------------------------------------------------
+#################################################################
+
 def print_summary(total_files_processed):
     num_failed = len(FAILED)
-    num_skipped = len(SKIPPED)
+    unique_skipped = {path for path, _ in SKIPPED}
+    num_skipped = len(unique_skipped)
     num_success = total_files_processed - (num_failed + num_skipped)
 
     print("\n====================================")
@@ -551,8 +621,12 @@ def print_summary(total_files_processed):
 
     if SKIPPED:
         print("⏭ SKIPPED :")
-        for f, reason in SKIPPED:
-            print(f" - {f}")
+        for f in unique_skipped:
+            print(f" - {f}") 
+            for path , reason in SKIPPED :
+                if path == f :
+                    print(f"    > {reason}")
+
         print()
 
     else:
@@ -562,21 +636,26 @@ def print_summary(total_files_processed):
 
 
 
-# ----------------------------------------------------
+#################################################################
 # MAIN FUNCTION
-# ----------------------------------------------------
+#################################################################
+
 def main():
     # Get Mode
     mode_description = MODE_DESCRIPTIONS.get(MODE, "UNKNOWN MODE")
-    
     # Clear Screen
     def clear_screen():
         os.system('cls' if os.name == 'nt' else 'clear')
     clear_screen()
 
 
-    # Print intuitive starting message
+    # ---------------------
+    # TITLE
+    # ---------------------
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print()
+    print("CLAY BATCH v.1.1")
+    print()
     print(f"MODE: {MODE} ( {mode_description} )")
     extra_msg = "    ❗❗❗  IMPORTANT: THIS IS REPLACE MODE  ❗❗❗"
 
@@ -596,11 +675,17 @@ def main():
             print("----> Rename nodes :")
             for old,new in RENAME_MAP.items():
                 print(f"       {old} → {new}")
+        case 7:
+            print("Exexute buttons : ", EXEC_BUTTONS)
+
 
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
-    nk_files = read_file_list(FILE_LIST)
 
+    # ---------------------
+    # DETAIL TO PROCESS
+    # ---------------------
+    nk_files = read_file_list(FILE_LIST)
     if not nk_files:
         print("\n❌ No NK files found. Exiting.\n")
         return
@@ -621,6 +706,11 @@ def main():
     print("-------------------------------- ")
     print()
 
+
+
+    # ---------------------
+    # CONFIRM
+    # ---------------------
     answer = input("Continue? (Y/N) : ").strip().lower()
     if answer not in ("", "y"):
         print("❌ Canceled by user.")
@@ -628,13 +718,21 @@ def main():
 
     print("✅ Continuing...\n")
 
-    # PROCESS EACH FILE
+
+
+    # ---------------------
+    # PROCESSING FILES
+    # ---------------------
     for i, nk in enumerate(nk_files, start=1):
         process_nk_file(nk, i, total)
 
     print("\n=== ALL DONE ===\n")
 
-    # Pass the total count to the summary function
+
+
+    # ---------------------
+    # SUMMARY
+    # ---------------------
     print_summary(total)
 
 
