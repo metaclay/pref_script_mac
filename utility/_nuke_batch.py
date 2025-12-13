@@ -8,6 +8,7 @@ import hashlib
 import re
 import nukescripts
 import claystudio
+import gc
 
 FILE_LIST = os.path.expanduser("~/Documents/preferences/script/utility/_file_list.txt")
 
@@ -15,7 +16,7 @@ FAILED = []     # (path, reason)
 SKIPPED = []    # (path, reason)
 RENDER_VERSION = 2 # 0:v0 , 1:render final, 2:render review exr, 3:render review mov
 RENDER_SIMPLE = 1 # Render OUTPUT or OUTPUT SIMPLE
-MODE = 7
+MODE = 8
 REPLACE_RENDER_GROUP = 1
 RENDER_TEXT2 = ("( OUTPUT SIMPLE )" if RENDER_SIMPLE == 1 else "")
 RENDER_TEXT = (" > RENDER V000" if RENDER_VERSION == 0 else (" > RENDER FINAL" if RENDER_VERSION == 1 else " > RENDER REVIEW EXR")) + RENDER_TEXT2
@@ -27,10 +28,17 @@ MODE_DESCRIPTIONS = {
     5: "RESET ROOT CX",
     6: "RENAME NODES",
     7: "EXECUTE BUTTON",
+    8: "SEARCH NODES - Read Only or Non Modyfying",
 }
 
 NODES_TO_DELETE = [
     "Precomp1",
+]
+
+NODES_TO_SEARCH = [
+    "_src_meta",
+    "_src_tc",
+
 ]
 
 RENAME_MAP = {
@@ -440,6 +448,30 @@ def execute_button(nk_path, exec_buttons=[]):
     return True # File is modified
 
 
+#################################################################
+# MODE 8
+#################################################################
+
+def search_nodes(nk_path, nodes_to_search) :
+    print("  ---> >> Running search nodes ...")
+    num_to_search = len(nodes_to_search)
+    found = 0
+    not_found_node = ""
+    for node in nodes_to_search :
+        ns = nuke.allNodes()
+        for n in ns :
+            if n.name().casefold().startswith(node.casefold()) :
+                print(f"  ✅ Found nodes {n.name()}")
+                found += 1
+                break
+        if not found :
+            print(f"  ⚠️ Not found node's name starts with {node}")
+            not_found_node += f"{node}, "
+    if found < num_to_search : # not found all - only found some or not found at all then Failed
+            FAILED.append((nk_path, f" Not found nodes : {not_found_node}"))
+
+
+
 
 
 #################################################################
@@ -457,6 +489,7 @@ def process_nk_file(nk_path, index, total):
 
     print("  ---> Resetting Nuke script state ...")
     nuke.scriptClear()
+
 
     if not os.path.exists(nk_path):
         msg = "File not found"
@@ -481,7 +514,8 @@ def process_nk_file(nk_path, index, total):
         return
     
     # START HASH
-    before_hash = full_scene_hash()
+    if MODE != 8 : # skip if non modifying mode
+        before_hash = full_scene_hash()
 
     print()
 
@@ -511,6 +545,10 @@ def process_nk_file(nk_path, index, total):
     elif MODE == 7 :
         changed = execute_button(nk_path, exec_buttons=EXEC_BUTTONS)
 
+    elif MODE == 8 :
+        search_nodes(nk_path, NODES_TO_SEARCH)
+        changed = False
+
     else:
         msg = f"Invalid MODE: {MODE}. Skipping processing."
         print("  ❌", msg)
@@ -535,7 +573,8 @@ def process_nk_file(nk_path, index, total):
     print()
 
     # END HASH
-    after_hash = full_scene_hash()
+    if MODE != 8 : # skip if non modifying mode
+        after_hash = full_scene_hash()
     
     if changed == None : # IF changed not set , meaning that changes depends on hash
         if before_hash == after_hash :
@@ -577,6 +616,9 @@ def process_nk_file(nk_path, index, total):
 
     print("  ///////////////////////////////////////////////////////////////////")
     print()
+
+    nuke.scriptClear()
+    gc.collect()
 
 
 #################################################################
@@ -669,14 +711,16 @@ def main():
             if REPLACE_RENDER_GROUP :
                 print(extra_msg)
         case 4:
-            print("Delete nodes : ", NODES_TO_DELETE)
+            print("----> Delete nodes : ", NODES_TO_DELETE)
         case 6:
             print()
             print("----> Rename nodes :")
             for old,new in RENAME_MAP.items():
                 print(f"       {old} → {new}")
         case 7:
-            print("Exexute buttons : ", EXEC_BUTTONS)
+            print("----> Exexute buttons : ", EXEC_BUTTONS)
+        case 8:
+            print(f"----> Search Nodes : {NODES_TO_SEARCH}")
 
 
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
