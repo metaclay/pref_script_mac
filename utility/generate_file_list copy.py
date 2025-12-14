@@ -1,50 +1,37 @@
 import os
 import re
-import platform
-from pathlib import Path
-
 
 # -----------------------------------
 # Configuration
 # -----------------------------------
-SYSTEM = platform.system()
-
-if SYSTEM == "Darwin":  # macOS
-    FOLDER = Path("/Users/andi/Desktop/temp/project_temp")
-elif SYSTEM == "Windows":
-    FOLDER = Path("D:/CLAY_EXT/.__USERS__/andi/.__CLAY__/PROJECTVOL_SRC/projects/COLT/project/nuke")
-else:
-    raise RuntimeError("Unsupported OS")
-
+folder = "/Volumes/CLAY_EXT/.__USERS__/andi/.__CLAY__/PROJECTVOL_SRC/projects/COLT/project/nuke"
 
 # leave this empty if don't want exact match to any item on this list.
-MATCH_LIST = [
+match_list = [
 
 ]
 
 # --- New Pattern Variables (All must match - AND operation) ---
 # For example: file must start with CLT_ AND end with _draft AND contain v001
-START_WITH = ["CLT_"]        # Filename must start with ANY of these -> example : ["CLT_"]   
-END_WITH = ["v001"]       # Filename must end with ANY of these (excluding extension) -> example : ["v001"]  
-CONTAIN = []            # Filename must contain ANY of these
+start_with = ["CLT_"]        # Filename must start with ANY of these -> example : ["CLT_"]   
+end_with = ["v001"]       # Filename must end with ANY of these (excluding extension) -> example : ["v001"]  
+contain = []            # Filename must contain ANY of these
 # -----------------------------
 
-# output_file = os.path.expanduser("~/Documents/preferences/script/utility/_file_list.txt")
-OUTPUT_FILE = Path.home() / "Documents/preferences/script/utility/_file_list.txt"
-
+output_file = os.path.expanduser("~/Documents/preferences/script/utility/_file_list.txt")
 
 # Exclusion patterns
-EXCLUDE_FILE_PATTERNS = ["annotations"]        # filenames containing these -> example : ["annotations"] 
-EXCLUDE_FOLDER_PATTERNS = ["annotations", "archives", "users", "_bak"]      # folders containing these -> example : ["annotations", "archives", "users", "_bak"]  
-EXCLUDE_FILE_ENDINGS = ["~"]                   # filenames ending with these -> example : ["~"]  
-EXCLUDE_AUTOSAVE_REGEX = re.compile(r'autosave\d*$')   # ignore autosave1, autosave10, etc.
+exclude_file_patterns = ["annotations"]        # filenames containing these -> example : ["annotations"] 
+exclude_folder_patterns = ["annotations", "archives", "users", "_bak"]      # folders containing these -> example : ["annotations", "archives", "users", "_bak"]  
+exclude_file_endings = ["~"]                   # filenames ending with these -> example : ["~"]  
+exclude_autosave_regex = re.compile(r'autosave\d*$')   # ignore autosave1, autosave10, etc.
 
 # Include-only extensions (only these files will be scanned)
-INCLUDE_EXTENSIONS = [".nk"]                   # <-- add more if needed
+include_extensions = [".nk"]                   # <-- add more if needed
 # -----------------------------------
 
 
-def search_files(folder_path, start_with=[], end_with=[], contain=[], write_output=False, ignore_case=1):
+def search_files(folder_path, start_with=[], end_with=[], contain=[], write_output=False):
     """
     Searches for files in a directory that match ALL of the provided patterns (AND operation).
 
@@ -61,41 +48,36 @@ def search_files(folder_path, start_with=[], end_with=[], contain=[], write_outp
     matched_files = []
 
     for root, dirs, files in os.walk(folder_path):
-        root = Path(root)
 
         # -------------------------------
         # Skip excluded folders
         # -------------------------------
         dirs[:] = [
             d for d in dirs
-            if not any(ex in d for ex in EXCLUDE_FOLDER_PATTERNS)
+            if not any(ex in d for ex in exclude_folder_patterns)
         ]
 
         for filename in files:
-            if ignore_case :
-                fname = filename.lower() #ignore case
-            else :
-                fname = filename
-
+            
             # ----------------------------------
             # Pre-filter checks
             # ----------------------------------
             
             # Include-only extension rule
-            if INCLUDE_EXTENSIONS:
-                if not any(fname.endswith(ext.lower() if ignore_case else ext ) for ext in INCLUDE_EXTENSIONS):
+            if include_extensions:
+                if not any(filename.lower().endswith(ext.lower()) for ext in include_extensions):
                     continue
 
             # Skip file ending exclusions (like '~')
-            if any(fname.endswith(end.lower() if ignore_case else end ) for end in EXCLUDE_FILE_ENDINGS):
+            if any(filename.endswith(end) for end in exclude_file_endings):
                 continue
 
             # Skip autosave files (autosave1, autosave10, autosave99, etc)
-            if EXCLUDE_AUTOSAVE_REGEX.search(fname):
+            if exclude_autosave_regex.search(filename):
                 continue
 
             # Skip filenames containing excluded patterns
-            if any((ex.lower() if ignore_case else ex ) in fname for ex in EXCLUDE_FILE_PATTERNS):
+            if any(ex in filename for ex in exclude_file_patterns):
                 continue
                 
             # ----------------------------------
@@ -104,11 +86,11 @@ def search_files(folder_path, start_with=[], end_with=[], contain=[], write_outp
             
             # Start with the assumption that the file matches
             is_match = True
-            base_name, extension = os.path.splitext(fname)
+            base_name, extension = os.path.splitext(filename)
 
             # 1. Start with match (Fail if list is not empty AND file doesn't match any pattern)
             if start_with:
-                if not any(fname.startswith(p.lower() if ignore_case else p) for p in start_with):
+                if not any(filename.startswith(p) for p in start_with):
                     is_match = False
             
             # If it already failed, move to the next file (optimization)
@@ -117,7 +99,7 @@ def search_files(folder_path, start_with=[], end_with=[], contain=[], write_outp
 
             # 2. End with match (excluding extension) (Fail if list is not empty AND file doesn't match any pattern)
             if end_with:
-                if not any(base_name.endswith(p.lower() if ignore_case else p) for p in end_with):
+                if not any(base_name.endswith(p) for p in end_with):
                     is_match = False
 
             # If it already failed, move to the next file (optimization)
@@ -126,11 +108,11 @@ def search_files(folder_path, start_with=[], end_with=[], contain=[], write_outp
                 
             # 3. Contain match (Fail if list is not empty AND file doesn't match any pattern)
             if contain:
-                if not any((p.lower() if ignore_case else p) in fname for p in contain):
+                if not any(p in filename for p in contain):
                     is_match = False
 
-            if MATCH_LIST :
-                if fname not in MATCH_LIST :
+            if match_list :
+                if filename not in match_list :
                     is_match = False
 
            
@@ -142,10 +124,10 @@ def search_files(folder_path, start_with=[], end_with=[], contain=[], write_outp
     # Optional output to file
     if write_output:
         try:
-            with open(OUTPUT_FILE, "w") as f:
+            with open(output_file, "w") as f:
                 for item in matched_files:
                     f.write(item + "\n")
-            print(f"✔ Output written to **{OUTPUT_FILE}**")
+            print(f"✔ Output written to **{output_file}**")
         except Exception as e:
             print(f"✘ Failed to write file: {e}")
 
@@ -157,20 +139,20 @@ def search_files(folder_path, start_with=[], end_with=[], contain=[], write_outp
 # -------------------------------
 if __name__ == "__main__":
 
-    print(f"Searching in folder: {FOLDER}"  )
-    print(f"Output File: {OUTPUT_FILE}"  )
+    print(f"Searching in folder: {folder}"  )
+    print(f"Output File: {output_file}"  )
 
     print()
     print(" -----------------------------------")
-    print(f"  Start With (OR logic): {START_WITH if START_WITH else 'Any'}")
-    print(f"  End With (OR logic): {END_WITH if END_WITH else 'Any'} (excluding extension)")
-    print(f"  Contain (OR logic): {CONTAIN if CONTAIN else 'Any'}")
+    print(f"  Start With (OR logic): {start_with if start_with else 'Any'}")
+    print(f"  End With (OR logic): {end_with if end_with else 'Any'} (excluding extension)")
+    print(f"  Contain (OR logic): {contain if contain else 'Any'}")
     print(" -----------------------------------")
     print("\nFile must satisfy **ALL** (AND logic) of the non-empty criteria above.")
-    if MATCH_LIST :
+    if match_list :
         print()
         print("   Also pattern must match one of item in this list : ")
-        for i in MATCH_LIST:
+        for i in match_list:
             print("  >  "+i)
     print()
     
@@ -180,10 +162,10 @@ if __name__ == "__main__":
         exit()
 
     results = search_files(
-        FOLDER,
-        start_with=START_WITH,
-        end_with=END_WITH,
-        contain=CONTAIN,
+        folder,
+        start_with=start_with,
+        end_with=end_with,
+        contain=contain,
         write_output=True
     )
 
