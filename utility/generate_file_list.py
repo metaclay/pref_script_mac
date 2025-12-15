@@ -7,8 +7,10 @@ from pathlib import Path
 # -----------------------------------
 # Configuration
 # -----------------------------------
-SYSTEM = platform.system()
 
+
+# Configure Path for specific OS
+SYSTEM = platform.system()
 if SYSTEM == "Darwin":  # macOS
     FOLDER = Path("/Users/andi/Desktop/temp/project_temp")
 elif SYSTEM == "Windows":
