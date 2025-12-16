@@ -3,14 +3,15 @@ import os
 import shutil
 import sys
 import clayproject
-import cxsetting
+# import cxsetting
 import hashlib
-import re
+# import re
 import nukescripts
-import claystudio
+# import claystudio
 import gc
+from pathlib import Path
 
-FILE_LIST = os.path.expanduser("~/Documents/preferences/script/utility/_file_list.txt")
+FILE_LIST = Path.home() / "Documents/preferences/script/utility/_file_list.txt"
 
 FAILED = []     # (path, reason)
 SKIPPED = []    # (path, reason)
