@@ -1,6 +1,3 @@
-/Users/andi/Desktop/temp/project_temp/CLT_LOG_0005_005/script/CLT_LOG_0005_005_v001.nk
-/Users/andi/Desktop/temp/project_temp/CLT_LOG_0005_010/script/CLT_LOG_0005_010_v001.nk
-/Users/andi/Desktop/temp/project_temp/CLT_LOG_0005_020/script/CLT_LOG_0005_020_v001.nk
-/Users/andi/Desktop/temp/project_temp/CLT_LOG_0005_030/script/CLT_LOG_0005_030_v001.nk
-/Users/andi/Desktop/temp/project_temp/CLT_LOG_0005_001/script/CLT_LOG_0005_001_v001.nk
-/Users/andi/Desktop/temp/project_temp/CLT_LOG_0005_025/script/CLT_LOG_0005_025_v001.nk
+/Users/andi/Desktop/PROJECTVOL/projects/COLT/project/nuke/CAF/CLT_NTR_0107_ss
+/Users/andi/Desktop/PROJECTVOL/projects/COLT/project/nuke/CAF/CLT_NTR_0107_005
+/Users/andi/Desktop/PROJECTVOL/projects/COLT/project/nuke/CAF/CLT_CAF_0114_330
