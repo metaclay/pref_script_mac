@@ -7,14 +7,14 @@ import shutil
 # -------------------------------------------------
 
 _VERSION = "1"
-_SRC  = os.path.expanduser("~/SRC_FOLDER")
-_DEST = os.path.expanduser("~/DEST_FOLDER")
+_SRC  = os.path.expanduser("/Volumes/CLAY_EXT/.__USERS__/andi/.__CLAY__/PROJECTVOL_SRC/CLAYNET/DATA/_archive/GOL")
+_DEST = os.path.expanduser("/Users/andi/Desktop/temp/gol/PLATES")
 _USE_EXTERNAL_FILE_LIST = 0
 _FILE_LIST = os.path.expanduser("~/Documents/preferences/script/utility/_file_list.txt")
 _OVERWRITE = 0
-_DEPTH = 0
-_KEEP_TREE = 0
-_PRINT_DETAIL = 0
+_DEPTH = 2
+_KEEP_TREE = 1 # KEEP ORIGINAL FOLDER TREE STRUCTURE
+_PRINT_DETAIL = 0 # SHOW MORE DETAIL INFO
 
 _MATCH_MODE = 1
 # 0 = exact
@@ -23,10 +23,32 @@ _MATCH_MODE = 1
 # 3 = any
 
 FOLDERS_TO_COPY = [
-
-"CLT_NTR_0107_005",
-"CLT_NTR_0107_140",
-"CLT_CAF_0114_330",
+"GOL_101_059_020",
+"GOL_101_059_100",
+"GOL_101_060_040",
+"GOL_101_071_020",
+"GOL_101_105_030",
+"GOL_102_083_060",
+"GOL_102_083_070",
+"GOL_102_083_510",
+"GOL_103_001_020",
+"GOL_103_059_100",
+"GOL_105_034_070",
+"GOL_105_034_080",
+"GOL_105_040_150",
+"GOL_105_040_410",
+"GOL_105_040_470",
+"GOL_105_042_050",
+"GOL_108_009_030",
+"GOL_108_009_070",
+"GOL_108_009_090",
+"GOL_108_009_100",
+"GOL_108_031_190",
+"GOL_108_031_200",
+"GOL_108_031_210",
+"GOL_108_031_220",
+"GOL_108_031_250",
+"GOL_108_044_140",
 ]
 
 # -------------------------------------------------
