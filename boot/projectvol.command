@@ -26,7 +26,7 @@ from pathlib import Path
 # ======= DEFAULT SETUP =======
 VER = 2.5
 LAN_CLAYNET = 1   # 1-USE CLANET ON SERVER , 0-LOCAL
-LAN_PROJECT = 2   # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN LAN_USER LIST
+LAN_PROJECT = 2  # 1-PROJECT LINK TO SERVER (LIVE) , 0-LOCAL, 2-AUTO-CHECK IN LAN_USER LIST
 EXT = 1           # 1-USE EXTERNAL DRIVE, 0-USE SYSTEM(DESKTOP FOLDER)
 LAN_PROJECT_ORIG = LAN_PROJECT
 
@@ -567,6 +567,10 @@ def remove_projectvol_tree():
         f"{HOME_LOCAL_PUB}/.__CLAY__/CLAYNET_SRC/CLAYNET_SRC",
     ]
 
+    # print()
+    # input("Press Enter to continue...")
+
+
     for p in projectvol_arr:
         if os.path.islink(p):
             print(f"> remove symlink -> {p}", end="")
@@ -617,6 +621,8 @@ def setup_folders_and_mounts(ipaddr: str):
         projects_src = f"//{ipaddr}/CLAYNET/homes/{USER}/projects"
     else:
         projects_src = f"{clay_home}/PROJECTS_SRC"
+
+
 
     localized_claynet_src = f"{clay_home_pub}/CLAYNET_SRC"
 
@@ -677,6 +683,13 @@ def setup_folders_and_mounts(ipaddr: str):
     print("----------------------------------------------------")
     target_localized = f"{PROJECTVOL}/localized/_Volumes/PROJECTVOL/CLAYNET"
     print(f"> create symlink -> {localized_claynet_src} -> {target_localized}", end="")
+
+    # print()
+    # print(f"{localized_claynet_src} -> {target_localized   }")
+    # input("Press Enter to continue...")
+
+
+
     try:
         run_sudo(["ln", "-s", localized_claynet_src, target_localized], PASSWORD_WK)
     except RuntimeError:
@@ -684,6 +697,10 @@ def setup_folders_and_mounts(ipaddr: str):
     print("... OK")
     print(" ")
     print(" ")
+
+
+
+
 
     # ---- CLAYNET & PROJECTS ----
     print("      SYMLINK (OR MOUNT) TO CLAYNET & PROJECTS ")
