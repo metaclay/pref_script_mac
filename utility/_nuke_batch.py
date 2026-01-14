@@ -15,7 +15,7 @@ FILE_LIST = Path.home() / "Documents/preferences/script/utility/_file_list.txt"
 
 FAILED = []     # (path, reason)
 SKIPPED = []    # (path, reason)
-RENDER_VERSION = 2 # 0:v0 , 1:render final, 2:render review exr, 3:render review mov
+RENDER_VERSION = 2 # 0:v0 , 1:render final, 2:render review exr, 3:render review mov, 4 : render int
 RENDER_SIMPLE = 1 # Render OUTPUT or OUTPUT SIMPLE
 MODE = 8
 REPLACE_RENDER_GROUP = 1
