@@ -6,7 +6,7 @@ alias hiero15="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/./Nuke15.1
 alias _nuke_batch="/Applications/Nuke15.1v2/Nuke15.1v2.app/Contents/MacOS/Nuke15.1 --nukex -t ~/Documents/preferences/script/utility/_nuke_batch.py"
 
 # ----- CLAYNET
-alias claynet="~/Documents/preferences/script/boot/projectvol.command"
+alias claynet="~/Documents/preferences/script/boot/claynet.command"
 
 # ----- show alias
 alias alias2="grep -v '^#'  ~/Documents/preferences/script/utility/alias.txt"
